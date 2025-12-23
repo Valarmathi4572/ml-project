@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>🩺 Diabetes Prediction Tool</h1>
+        <p>Early detection through machine learning</p>
+        <div class="stats-bar">
+            <div class="stat">
+                <i class="fas fa-users"></i>
+                <span>Over 500M affected worldwide</span>
+            </div>
+            <div class="stat">
+                <i class="fas fa-chart-line"></i>
+                <span>90% Type 2 diabetes</span>
+            </div>
+            <div class="stat">
+                <i class="fas fa-heartbeat"></i>
+                <span>Early detection saves lives</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="info-section">
+        <div class="info-card interactive-card" onclick="toggleCard(this)">
+            <h3>📊 About Diabetes</h3>
+            <p>Diabetes is a chronic condition that affects how your body processes blood sugar. Early detection can help prevent complications.</p>
+            <div class="card-details">
+                <ul>
+                    <li><strong>Type 1:</strong> Autoimmune condition, usually diagnosed in childhood</li>
+                    <li><strong>Type 2:</strong> Lifestyle-related, most common form</li>
+                    <li><strong>Gestational:</strong> During pregnancy, usually temporary</li>
+                </ul>
+                <div class="fact-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Did you know?</strong> Diabetes affects 1 in 11 adults worldwide
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card interactive-card" onclick="toggleCard(this)">
+            <h3>🎯 Risk Factors</h3>
+            <p>Key indicators that influence diabetes risk:</p>
+            <div class="card-details">
+                <ul>
+                    <li><i class="fas fa-tint"></i> High blood glucose levels</li>
+                    <li><i class="fas fa-users"></i> Family history</li>
+                    <li><i class="fas fa-birthday-cake"></i> Age (over 45)</li>
+                    <li><i class="fas fa-weight"></i> Body weight and activity level</li>
+                    <li><i class="fas fa-utensils"></i> Poor diet and lifestyle</li>
+                </ul>
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <span>Genetic Factors</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <span>Lifestyle Factors</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-header">
+            <h2>🔍 Health Assessment</h2>
+            <div class="progress-indicator">
+                <div class="step active" data-step="1">
+                    <i class="fas fa-user"></i>
+                    <span>Personal</span>
+                </div>
+                <div class="step" data-step="2">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Health</span>
+                </div>
+                <div class="step" data-step="3">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Results</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="form-description">Enter your health metrics below for a preliminary diabetes risk assessment.</p>
+
+        <form action="/predict" method="post" class="prediction-form" id="diabetesForm">
+            <div class="form-section active" data-section="1">
+                <h3><i class="fas fa-user"></i> Personal Information</h3>
+                <div class="form-group">
+                    <label for="Pregnancies">
+                        Number of Pregnancies
+                        <i class="fas fa-info-circle tooltip-icon" title="Number of times pregnant (0 for males)"></i>
+                    </label>
+                    <input type="number" id="Pregnancies" name="Pregnancies" min="0" placeholder="e.g., 2" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Age">
+                        Age (years)
+                        <i class="fas fa-info-circle tooltip-icon" title="Your current age in years"></i>
+                    </label>
+                    <input type="number" id="Age" name="Age" min="0" max="120" placeholder="e.g., 35" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <button type="button" class="next-btn" onclick="nextSection(2)">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+
+            <div class="form-section" data-section="2">
+                <h3><i class="fas fa-heartbeat"></i> Health Metrics</h3>
+                <div class="form-group">
+                    <label for="Glucose">
+                        Glucose Level (mg/dL)
+                        <i class="fas fa-info-circle tooltip-icon" title="Blood glucose level after fasting"></i>
+                    </label>
+                    <input type="number" step="0.1" id="Glucose" name="Glucose" min="0" placeholder="e.g., 120.5" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="BloodPressure">
+                        Blood Pressure (mm Hg)
+                        <i class="fas fa-info-circle tooltip-icon" title="Diastolic blood pressure"></i>
+                    </label>
+                    <input type="number" step="0.1" id="BloodPressure" name="BloodPressure" min="0" placeholder="e.g., 80.0" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="SkinThickness">
+                        Skin Thickness (mm)
+                        <i class="fas fa-info-circle tooltip-icon" title="Triceps skin fold thickness"></i>
+                    </label>
+                    <input type="number" step="0.1" id="SkinThickness" name="SkinThickness" min="0" placeholder="e.g., 25.0" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Insulin">
+                        Insulin Level (mu U/ml)
+                        <i class="fas fa-info-circle tooltip-icon" title="2-hour serum insulin level"></i>
+                    </label>
+                    <input type="number" step="0.1" id="Insulin" name="Insulin" min="0" placeholder="e.g., 150.0" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="BMI">
+                        Body Mass Index (BMI)
+                        <i class="fas fa-info-circle tooltip-icon" title="Weight in kg / (height in m)²"></i>
+                    </label>
+                    <input type="number" step="0.1" id="BMI" name="BMI" min="0" placeholder="e.g., 28.5" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="DiabetesPedigreeFunction">
+                        Diabetes Pedigree Function
+                        <i class="fas fa-info-circle tooltip-icon" title="Genetic relationship to diabetes"></i>
+                    </label>
+                    <input type="number" step="0.01" id="DiabetesPedigreeFunction" name="DiabetesPedigreeFunction" min="0" placeholder="e.g., 0.45" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="prev-btn" onclick="prevSection(1)"><i class="fas fa-arrow-left"></i> Back</button>
+                    <button type="submit" class="predict-btn" id="predictBtn">
+                        <span class="btn-text">🔮 Get Prediction</span>
+                        <div class="loading-spinner" id="loadingSpinner"></div>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result animate-result">
+            <div class="result-header">
+                <h3><i class="fas fa-chart-bar"></i> Prediction Result</h3>
+                <div class="confidence-meter">
+                    <span>AI Confidence:</span>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: {{ '85%' if 'Diabetic' in prediction_text else '78%' }}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prediction-text {{ 'diabetic' if 'Diabetic' in prediction_text else 'non-diabetic' }}">
+                <div class="result-icon">
+                    {% if 'Diabetic' in prediction_text %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% else %}
+                    <i class="fas fa-check-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="result-content">
+                    <h4>{{ prediction_text }}</h4>
+                    <p class="result-description">
+                        {% if 'Diabetic' in prediction_text %}
+                        Based on your inputs, you may have an elevated risk for diabetes. Please consult a healthcare professional for proper testing and diagnosis.
+                        {% else %}
+                        Based on your inputs, you appear to be at low risk for diabetes. Maintain a healthy lifestyle to keep it that way!
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="recommendations">
+                <h4>💡 Recommendations</h4>
+                <ul>
+                    {% if 'Diabetic' in prediction_text %}
+                    <li><i class="fas fa-stethoscope"></i> Schedule a medical checkup</li>
+                    <li><i class="fas fa-utensils"></i> Monitor your diet and blood sugar</li>
+                    <li><i class="fas fa-running"></i> Increase physical activity</li>
+                    <li><i class="fas fa-weight"></i> Maintain healthy weight</li>
+                    {% else %}
+                    <li><i class="fas fa-apple-alt"></i> Continue healthy eating habits</li>
+                    <li><i class="fas fa-dumbbell"></i> Stay physically active</li>
+                    <li><i class="fas fa-moon"></i> Get regular health checkups</li>
+                    <li><i class="fas fa-users"></i> Share this with family members</li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <p class="disclaimer">
+                <i class="fas fa-exclamation-circle"></i>
+                ⚠️ This is a preliminary assessment using machine learning. Always consult a healthcare professional for accurate diagnosis and treatment.
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>💡 Remember: This tool uses machine learning for educational purposes. Always seek professional medical advice.</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Interactive features
+        function toggleCard(card) {
+            card.classList.toggle('expanded');
+        }
+
+        function nextSection(sectionNum) {
+            const currentSection = document.querySelector('.form-section.active');
+            const nextSection = document.querySelector(`[data-section="${sectionNum}"]`);
+            const currentStep = document.querySelector('.step.active');
+            const nextStep = document.querySelector(`[data-step="${sectionNum}"]`);
+
+            if (currentSection && nextSection) {
+                currentSection.classList.remove('active');
+                nextSection.classList.add('active');
+                currentStep.classList.remove('active');
+                nextStep.classList.add('active');
+            }
+        }
+
+        function prevSection(sectionNum) {
+            const currentSection = document.querySelector('.form-section.active');
+            const prevSection = document.querySelector(`[data-section="${sectionNum}"]`);
+            const currentStep = document.querySelector('.step.active');
+            const prevStep = document.querySelector(`[data-step="${sectionNum}"]`);
+
+            if (currentSection && prevSection) {
+                currentSection.classList.remove('active');
+                prevSection.classList.add('active');
+                currentStep.classList.remove('active');
+                prevStep.classList.add('active');
+            }
+        }
+
+        // Real-time validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input[type="number"]');
+
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    validateInput(this);
+                });
+
+                input.addEventListener('blur', function() {
+                    validateInput(this);
+                });
+            });
+
+            // Form submission with loading
+            const form = document.getElementById('diabetesForm');
+            const predictBtn = document.getElementById('predictBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            form.addEventListener('submit', function() {
+                predictBtn.disabled = true;
+                predictBtn.innerHTML = '<div class="loading-spinner"></div><span class="btn-text">Analyzing...</span>';
+            });
+        });
+
+        function validateInput(input) {
+            const feedback = input.nextElementSibling;
+            const value = parseFloat(input.value);
+            const min = parseFloat(input.min) || 0;
+            const max = parseFloat(input.max);
+
+            feedback.className = 'input-feedback';
+
+            if (input.value === '') {
+                feedback.textContent = '';
+                return;
+            }
+
+            if (isNaN(value)) {
+                feedback.textContent = 'Please enter a valid number';
+                feedback.classList.add('error');
+                return;
+            }
+
+            if (value < min) {
+                feedback.textContent = `Value must be at least ${min}`;
+                feedback.classList.add('error');
+                return;
+            }
+
+            if (max && value > max) {
+                feedback.textContent = `Value must be at most ${max}`;
+                feedback.classList.add('error');
+                return;
+            }
+
+            // Specific validations
+            switch(input.id) {
+                case 'Glucose':
+                    if (value < 70) {
+                        feedback.textContent = 'Low glucose level - consult doctor';
+                        feedback.classList.add('warning');
+                    } else if (value > 140) {
+                        feedback.textContent = 'High glucose level detected';
+                        feedback.classList.add('warning');
+                    } else {
+                        feedback.textContent = 'Normal range';
+                        feedback.classList.add('success');
+                    }
+                    break;
+                case 'BMI':
+                    if (value < 18.5) {
+                        feedback.textContent = 'Underweight';
+                        feedback.classList.add('info');
+                    } else if (value >= 18.5 && value < 25) {
+                        feedback.textContent = 'Normal weight';
+                        feedback.classList.add('success');
+                    } else if (value >= 25 && value < 30) {
+                        feedback.textContent = 'Overweight';
+                        feedback.classList.add('warning');
+                    } else {
+                        feedback.textContent = 'Obese';
+                        feedback.classList.add('error');
+                    }
+                    break;
+                case 'Age':
+                    if (value < 18) {
+                        feedback.textContent = 'Results may not be accurate for minors';
+                        feedback.classList.add('warning');
+                    } else if (value > 80) {
+                        feedback.textContent = 'Age factor considered';
+                        feedback.classList.add('info');
+                    } else {
+                        feedback.textContent = 'Valid age range';
+                        feedback.classList.add('success');
+                    }
+                    break;
+                default:
+                    feedback.textContent = 'Valid input';
+                    feedback.classList.add('success');
+            }
+        }
+
+        // Animate results on load
+        window.addEventListener('load', function() {
+            const result = document.querySelector('.result');
+            if (result) {
+                result.style.animation = 'slideInUp 0.8s ease-out';
+            }
+        });
+    </script>
+</body>
+</html>
