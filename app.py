@@ -42,20 +42,21 @@ def predict():
         # Load model if not loaded
         global model, scaler
         if model is None:
-            print("Using dummy model for deployment", file=sys.stderr)
-            # Fallback dummy classes
-            class DummyModel:
-                def predict(self, X):
-                    return [0 for _ in X]
-                def predict_proba(self, X):
-                    return [[0.6, 0.4] for _ in X]
+            if not load_model_and_scaler():
+                print("Warning: Could not load model files. Using dummy predictions.", file=sys.stderr)
+                # Fallback dummy classes
+                class DummyModel:
+                    def predict(self, X):
+                        return [0 for _ in X]
+                    def predict_proba(self, X):
+                        return [[0.6, 0.4] for _ in X]
 
-            class DummyScaler:
-                def transform(self, X):
-                    return X
+                class DummyScaler:
+                    def transform(self, X):
+                        return X
 
-            model = DummyModel()
-            scaler = DummyScaler()
+                model = DummyModel()
+                scaler = DummyScaler()
 
         # Collect form fields safely
         features = [
