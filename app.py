@@ -32,23 +32,6 @@ def load_model_and_scaler():
         print(f"Error loading model/scaler: {e}", file=sys.stderr)
         return False
 
-# Load model and scaler on startup
-if not load_model_and_scaler():
-    print("Warning: Could not load model files. Using dummy predictions.", file=sys.stderr)
-    # Fallback dummy classes
-    class DummyModel:
-        def predict(self, X):
-            return [0 for _ in X]
-        def predict_proba(self, X):
-            return [[0.6, 0.4] for _ in X]
-
-    class DummyScaler:
-        def transform(self, X):
-            return X
-
-    model = DummyModel()
-    scaler = DummyScaler()
-
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -56,6 +39,25 @@ def home():
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
+        # Load model if not loaded
+        global model, scaler
+        if model is None:
+            if not load_model_and_scaler():
+                print("Warning: Could not load model files. Using dummy predictions.", file=sys.stderr)
+                # Fallback dummy classes
+                class DummyModel:
+                    def predict(self, X):
+                        return [0 for _ in X]
+                    def predict_proba(self, X):
+                        return [[0.6, 0.4] for _ in X]
+
+                class DummyScaler:
+                    def transform(self, X):
+                        return X
+
+                model = DummyModel()
+                scaler = DummyScaler()
+
         # Collect form fields safely
         features = [
             float(request.form["Pregnancies"]),
